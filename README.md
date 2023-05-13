@@ -3,7 +3,10 @@
 - doesn't require an API key (because it uses the old, but active v1 endpoint)
 - just javascript `fetch` without dependencies
 
-Try it out: https://ytsearch.deno.dev/?query=robert%20johnny%20and%20mary
+Try it out: 
+
+- https://ytsearch.deno.dev/youtube/search?query=robert%20johnny%20and%20mary
+- `https://ytsearch.deno.dev/spotify/playlists/:id`
 
 ## Run locally in watch mode
 

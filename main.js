@@ -1,18 +1,24 @@
-import { serve } from 'https://deno.land/std@0.155.0/http/server.ts'
-import { searchYoutube } from './search.js'
+import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+import { getQuery } from "https://deno.land/x/oak/helpers.ts";
+import { oakCors } from "https://deno.land/x/cors/mod.ts";
 
-// A deno endpoint around the searchYoutube function
-async function handler(req) {
-	const url = new URL(req.url)
-	const query = url.searchParams.get('query')
-	if (!query) return new Response('missing ?query param')
+import { getSpotifyPlaylist } from './spotify.js'
+import { searchYoutube } from './youtube.js'
 
-	try {
-		const results = await searchYoutube(query)
-		return Response.json(results)
-	} catch (err) {
-		return Response.json({ error: err.message }, { status: 500 })
-	}
-}
+const router = new Router()
 
-serve(handler)
+router
+  .get('/youtube/search', async (context) => {
+    const x = getQuery(context)
+    context.response.body = await searchYoutube(x.query)
+  })
+  .get('/spotify/playlists/:id', async (context) => {
+    context.response.body = await getSpotifyPlaylist(context.params.id)
+  })
+
+const app = new Application()
+app.use(oakCors())
+app.use(router.routes())
+console.log('app listening on http://localhost:8000')
+await app.listen({ port: 8000 })
+
